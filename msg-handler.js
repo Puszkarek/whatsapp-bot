@@ -71,6 +71,21 @@ module.exports = async (client, message) => {
 				async audio() {
 					client.sendAudio(from, body.link, id);
 				},
+				async replyWithPushName() {
+					let coupleList = "";
+					const contactIdList = body.contactId;
+					const contactLength = contactIdList.length;
+					for (let i = 0; i < contactLength; i++) {
+						const contact = await client.getContact(contactIdList[i]);
+						const contactName = contact.pushname != null ? contact.pushname : contact.formattedName
+						coupleList += contactName;
+						if (i != contactLength - 1) {
+							coupleList += " e ";
+						}
+					}
+					coupleList = coupleList.trim();
+					await client.reply(from, coupleList + body.response, id);
+				},
 				async mention() {
 					await client.sendTextWithMentions(from, body.response);
 				},
@@ -119,6 +134,10 @@ module.exports = async (client, message) => {
 
 		const groupId = isGroupMsg ? groupMetadata.id : "";
 		// * verify if is a function
+		if (message.author == ownerNumber && argumentsTxt.includes("test")) {
+
+			console.log(message)
+		}
 		if (argumentsTxt.startsWith(prefix)) {
 			//formatted log
 			console.log(
